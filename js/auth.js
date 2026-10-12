@@ -1,0 +1,8 @@
+import { auth, firebaseReady } from "./firebase.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+const email=document.querySelector("#email"),password=document.querySelector("#password"),loginBtn=document.querySelector("#loginBtn"),signupBtn=document.querySelector("#signupBtn"),logoutBtn=document.querySelector("#logoutBtn"),status=document.querySelector("#authStatus");
+if(!firebaseReady){status.textContent="Firebase is not configured yet. Add your web app config in js/firebase.js.";loginBtn.disabled=true;signupBtn.disabled=true;}
+if(firebaseReady){onAuthStateChanged(auth,user=>{if(user){status.textContent=`Logged in as ${user.email}`;logoutBtn.classList.remove("hidden");loginBtn.classList.add("hidden");signupBtn.classList.add("hidden");}else{status.textContent="";logoutBtn.classList.add("hidden");loginBtn.classList.remove("hidden");signupBtn.classList.remove("hidden");}});}
+loginBtn?.addEventListener("click",async()=>{try{await signInWithEmailAndPassword(auth,email.value.trim(),password.value);status.textContent="Logged in.";}catch(err){status.textContent=err.message;}});
+signupBtn?.addEventListener("click",async()=>{try{await createUserWithEmailAndPassword(auth,email.value.trim(),password.value);status.textContent="Account created.";}catch(err){status.textContent=err.message;}});
+logoutBtn?.addEventListener("click",async()=>{await signOut(auth);status.textContent="Logged out.";});
